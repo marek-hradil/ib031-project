@@ -1,0 +1,101 @@
+[project]
+name = "ib031-project"
+version = "0.1.0"
+description = "Default template for PDM package"
+authors = [
+    { name = "Marek Hradil jr.", email = "marek.hradil@outlook.com" },
+    { name = "Martin Baumgartner" },
+    { name = "Ondřej Valášek" },
+]
+dependencies = []
+requires-python = "==3.12.*"
+readme = "README.md"
+license = { text = "MIT" }
+
+
+[tool.pdm]
+distribution = false
+
+[tool.pdm.dev-dependencies]
+dev = ["mypy", "ruff"]
+
+
+#####################################
+# Scripts
+#####################################
+
+[tool.pdm.scripts]
+l = { composite = ["lint", "format", "mypy"] }
+test = "pytest tests"
+lint = "ruff check ."
+format = "ruff format ."
+mypy = "mypy ."
+
+#####################################
+# Tool configuration
+#####################################
+
+[tool.coverage.run]
+branch = true
+omit = ["tests/*"]
+source = ["."]
+
+[tool.coverage.report]
+exclude_also = [
+    # Don't complain about abstract methods, they aren't run:
+    "@(abc\\.)?abstractmethod",
+]
+
+[tool.mypy]
+strict = true
+ignore_missing_imports = true
+
+[tool.ruff]
+fix = true
+line-length = 88
+target-version = "py311"
+
+[tool.ruff.format]
+# Enable reformatting of code snippets in docstrings.
+docstring-code-format = true
+
+[tool.ruff.lint]
+unfixable = [
+    "ERA", # do not autoremove commented out code
+]
+extend-select = [
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "ERA", # flake8-eradicate/eradicate
+    "I",   # isort
+    "N",   # pep8-naming
+    "PIE", # flake8-pie
+    "PGH", # pygrep
+    "RUF", # ruff checks
+    "SIM", # flake8-simplify
+    "TCH", # flake8-type-checking
+    "TID", # flake8-tidy-imports
+    "UP",  # pyupgrade
+    "D",   # pydocstyle 
+]
+extend-ignore = [
+    "ERA001", # commented out code
+    "D100",   # missing docstring in public module
+    "D101",   # missing docstring in public class
+    "D102",   # missing docstring in public method
+    "D103",   # missing docstring in public function
+    "D104",   # missing docstring in public package
+    "D105",   # missing docstring in magic method
+    "D106",   # missing docstring in public nested class
+    "D107",   # missing docstring in __init__
+]
+
+[tool.ruff.lint.flake8-tidy-imports]
+ban-relative-imports = "all"
+
+[tool.ruff.lint.isort]
+lines-after-imports = 2
+known-first-party = ["tests"]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
