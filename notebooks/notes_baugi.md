@@ -12,14 +12,16 @@
 - Impute then encode or the other way around?
 - For numeric data IterativeImputer - should be fine, the size of data is small
 
-## Feature Extraction
-- Educational difference between mother and father
-- Other features to add?
-
 ## Encoding
 - SimpleEncoder for variables that have only 2 unique values
 - OneHotEncoder for the rest
 
 ## Scaling
 - MinMaxEncoder for all data
-- Something else? 
+- Something else?
+
+## Splitiing the Data
+
+## Feature Selection
+- Correlation feature selecion
+- Mutual Information feature selection
