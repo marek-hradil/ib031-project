@@ -3,11 +3,11 @@
 TODO:
 
 - [X] Explorační analýza dat
-- [ ] Předzpracování dat
-- [ ] Výběr modelu
-    - [ ] Martin
-    - [ ] Marek
-    - [ ] Ondra
+- [X] Předzpracování dat
+- [X] Výběr modelu
+    - [X] Martin - XGBoost
+    - [X] Marek - SVM
+    - [X] Ondra  - Ridge Regression
 - [ ] Obecné fungování modelu soupis
     - [ ] Martin
     - [ ] Marek
