@@ -11,13 +11,13 @@ TODO:
 - [ ] Obecné fungování modelu soupis
     - [ ] Martin
     - [ ] Marek
-    - [ ] Ondra
+    - [X] Ondra
 - [ ] Trénink a interpretace modelu
     - [ ] Martin
     - [ ] Marek
-    - [ ] Ondra
+    - [X] Ondra
 - [ ] Evalutation modelu
     - [ ] Martin
     - [ ] Marek
-    - [ ] Ondra
+    - [X] Ondra
 - [ ] Soupis výsledků
