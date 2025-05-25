@@ -1,14 +1,14 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[21]:
+# In[1]:
 
 
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.experimental import enable_iterative_imputer
-from sklearn.preprocessing import LabelEncoder, OneHotEncoder, MinMaxScaler
+from sklearn.preprocessing import LabelEncoder, OneHotEncoder, StandardScaler
 from sklearn.impute import SimpleImputer, IterativeImputer
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import make_pipeline
@@ -17,7 +17,7 @@ from sklearn.feature_selection import SelectKBest, f_regression, mutual_info_reg
 from yellowbrick.model_selection import ValidationCurve
 
 
-# In[22]:
+# In[2]:
 
 
 from generated import eda
@@ -25,17 +25,17 @@ from generated import eda
 
 # ## 2.2 Preprocessing
 
-# In[23]:
+# In[3]:
 
 
 # Checkpoint to reset preprocessing
 df = pd.read_excel("../data/unprocessed.xlsx")
-assert df.shape == (649, 33)
+assert df.shape == (1044, 34)
 
 
 # As our first preprocessing step, we will change the dtype from 'object' to 'category'
 
-# In[24]:
+# In[4]:
 
 
 categorical_columns = eda.categorical_columns
@@ -50,7 +50,7 @@ df[categorical_columns].info()
 # 
 # For categorical data, we will use SimpleImputer with "most frequent" strategy
 
-# In[25]:
+# In[5]:
 
 
 simple_imputer = SimpleImputer(strategy="most_frequent")
@@ -61,7 +61,7 @@ for col in categorical_columns:
 
 # For numeric variables, since there are not a lot of missing data IterativeImputer would be the best choice
 
-# In[26]:
+# In[6]:
 
 
 iterative_imputer = IterativeImputer()
@@ -79,7 +79,7 @@ assert len(missing_values[missing_values > 0]) == 0
 # 
 # We will use a LabelEncoder for "binary" columns
 
-# In[20]:
+# In[7]:
 
 
 label_encoder = LabelEncoder()
@@ -93,7 +93,7 @@ df[binary_columns].head()
 
 # And OneHotEncoder for columns that have more than 2 unique values
 
-# In[21]:
+# In[8]:
 
 
 one_hot_encoder = OneHotEncoder(sparse_output=False)
@@ -109,7 +109,7 @@ one_hot_encoded_df = pd.DataFrame(one_hot_encoded_data, columns=one_hot_encoded_
 df = pd.concat([df.drop(columns=nonbinary_columns), one_hot_encoded_df], axis=1)
 
 
-# In[22]:
+# In[9]:
 
 
 df.shape
@@ -121,11 +121,14 @@ df.shape
 # 
 # Lets continue with scaling our data, we will use a MinMaxScaler to scale all data to a range from 0-1
 
-# In[23]:
+# In[11]:
 
 
-min_max_scaler = MinMaxScaler()
-df = pd.DataFrame(min_max_scaler.fit_transform(df), columns=df.columns)
+exclude_cols = ["G1", "G2", "G3"]
+scale_cols = [col for col in df.columns if col not in exclude_cols]
+
+scaler = StandardScaler()
+df[scale_cols] = scaler.fit_transform(df[scale_cols])
 
 
 # ### Splitting the Data
@@ -167,10 +170,4 @@ for score_func in [f_regression, mutual_info_regression]:
     viz.fit(X_train, y_train)
     viz.show()
     plt.show()
-
-
-# In[ ]:
-
-
-
 

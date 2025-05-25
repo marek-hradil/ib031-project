@@ -50,7 +50,7 @@
 # - **G3** - final grade (numeric: from 0 to 20, output target)
 # 
 
-# In[35]:
+# In[1]:
 
 
 import pandas as pd
@@ -65,26 +65,31 @@ from scipy.stats import normaltest, norm
 # ## 1.0 Loading the Data
 # The first row and column were manually removed from the .xlsx file in order for the .read_excel function to load data properly
 
-# In[5]:
+# In[2]:
 
 
 path = "../data/student_performance.xlsx"
-df = pd.read_excel(path)
+portuguese_df = pd.read_excel(path, sheet_name="portuguese")
+math_df = pd.read_excel(path, sheet_name="math")
 
 
 # ## 2.1 Exploratory Data Analysys
 
-# In[6]:
+# In[3]:
 
 
-df
+portuguese_df["subject"] = "portuguese"
+math_df["subject"] = "math"
+
+# Combine the two
+df = pd.concat([portuguese_df, math_df], ignore_index=True)
 
 
 # The data set has 714 observations and 34 features per observation
 # 
 # Firstly lets drop the id column since a unique record id doesn't provide us with any extra information and remove any duplicates
 
-# In[7]:
+# In[4]:
 
 
 df = df.drop("id", axis=1)
@@ -96,7 +101,7 @@ df.shape
 # 
 # Next we will look at the missing values of the dataset
 
-# In[8]:
+# In[5]:
 
 
 missing_values = df.isnull().sum()
@@ -107,7 +112,7 @@ missing_values[missing_values > 0]
 # 
 # Next we can look at the types
 
-# In[9]:
+# In[6]:
 
 
 df.dtypes
@@ -116,7 +121,7 @@ df.dtypes
 # We will firstly explore the **categorical columns** - those which have a dtype of 'object'  
 # We are going to list them out along with their unique values in order to later decide how can we transform them to fit our models needs
 
-# In[10]:
+# In[7]:
 
 
 categorical_columns = df.select_dtypes(include=["object"]).columns
@@ -132,7 +137,7 @@ for col in categorical_columns:
 # 
 # For the sake of visualizations, we will fix the inconsistent columns
 
-# In[11]:
+# In[8]:
 
 
 transformation_dict = {
@@ -146,7 +151,7 @@ df[inconsistent_columns] = df[inconsistent_columns].apply(lambda col: col.map(tr
 
 # Now we can visualize these columns, starting with those which have only two unique values
 
-# In[13]:
+# In[9]:
 
 
 sns.set()
@@ -171,7 +176,7 @@ plt.show()
 # 
 # Lets also visualize the categorical columns, which have more than 2 unique values
 
-# In[14]:
+# In[10]:
 
 
 index = 1
@@ -200,7 +205,7 @@ plt.show()
 # Next, we will take a closer look at **numeric columns**, starting with a basic summary  
 # We won't consider the id column, since it has no information value for us
 
-# In[15]:
+# In[11]:
 
 
 numeric_columns = df.select_dtypes(include=["int64", "float64"]).columns
@@ -214,18 +219,14 @@ df[numeric_columns].describe().T
 # 
 # We can also look at the distributions
 
-# In[12]:
+# In[17]:
 
 
 plt.figure(figsize=(15, 12))
 
 for i, col in enumerate(numeric_columns, 1):
     plt.subplot(4, 4, i)
-    if col not in target_columns:
-        sns.histplot(data=df, x=col)
-    else:
-        ax = sns.histplot(data=df, x=col, kde=True)
-        ax.lines[0].set_color('crimson')
+    sns.histplot(data=df, x=col)
     plt.title(f"Distribution of {col}")
 
 plt.tight_layout()
@@ -234,7 +235,7 @@ plt.show()
 
 # Target variables G1, G2 and G3 seem to follow a Gaussian distribution, we can verify this by observing QQ plot and then using `normaltest`
 
-# In[32]:
+# In[13]:
 
 
 # Unfortunately QQ plot is not available in seaborn,
@@ -275,7 +276,7 @@ plt.show()
 
 # From the QQ plots, it seems that G1 fits normal distribution quantiles perfectly, G2 a bit less and G3 does not as much. We can make this more formal using `normaltest`
 
-# In[34]:
+# In[14]:
 
 
 _, p1 = normaltest(df["G1"])
@@ -291,7 +292,7 @@ print("G3 p-value:", p3)
 
 # Back to all of the distributions - we can also visualize the distributions using boxplots, to allow us to have more insight into the existence of outliers:
 
-# In[14]:
+# In[15]:
 
 
 plt.figure(figsize=(15, 12))
@@ -311,7 +312,7 @@ plt.show()
 # Outliers in `G1`-`G3` are also meaningful for us, given that we are trying to  predict the final grades. So only thing where we have to focus in preprocessing is the `absences`,
 # as they seem to exhibit a larger number of outliers.
 
-# In[15]:
+# In[16]:
 
 
 correlation_matrix = df[numeric_columns].corr()
